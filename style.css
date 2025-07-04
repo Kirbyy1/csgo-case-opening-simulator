@@ -1,0 +1,381 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Roboto', 'Arial', sans-serif;
+    min-height: 100vh;
+    background-color: #000;
+    overflow-x: hidden;
+    color: #fff;
+    position: relative;
+}
+
+.background-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url('images/dust2-background.webp');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    filter: blur(3px);
+    z-index: -1;
+}
+
+/* Header with glassmorphism */
+header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(6px);
+    padding: 20px;
+    text-align: center;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+main {
+    margin: 20px auto 0 auto; /* Top margin only */
+    padding: 40px 20px;
+    width: 90%;
+    max-width: 1100px;
+    height: 82vh; /* Almost full height, leaves some bottom gap */
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(8px);
+    border-radius: 20px;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+}
+
+
+#case-container {
+    background: rgba(0,0,0,0.35);
+    border-radius: 12px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.18);
+    padding: 12px 8px 8px 8px;
+    position: relative;
+    width: 220px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 0 auto;
+    transition: transform 0.15s, box-shadow 0.15s;
+    overflow: hidden;
+    border: 1px solid rgba(255,255,255,0.10);
+}
+
+.case-image {
+    width: 150px;
+    height: auto;
+    border-radius: 10px;
+    transition: transform 0.2s ease;
+}
+
+
+.case-image
+{  
+    width: 200px;
+    transition: transform 0.4s ease, z-index 0.4s ease;
+    z-index: 1;
+}
+
+img:hover {
+    transform: scale(1.2);
+    z-index: 10;
+  }
+
+
+  .case-price {
+    position: absolute;
+    right: 12px;
+    bottom: 12px;
+    color: #1aff8c;
+    font-size: 1.15rem;
+    font-weight: 500;
+    background: linear-gradient(90deg, rgba(0,0,0,0.18) 60%, rgba(0,0,0,0));
+    padding: 2px 8px;
+    border-radius: 6px;
+    pointer-events: none;
+}
+
+.case-title {
+    width: 220px;
+    text-align: left;
+    font-size: 1.08rem;
+    color: #fff;
+    font-weight: 500;
+    margin-top: 8px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 0;
+    letter-spacing: 0.01em;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.18);
+    pointer-events: none;
+}
+
+
+/*-------------------------------------------*/
+/*-------------------------------------------*/
+/*-------------------------------------------*/
+/*-------------------------------------------*/
+/*-------------------------------------------*/
+/*-------------------------------------------*/
+/*-------------------------------------------*/
+
+.main-case-details {
+    background: rgba(24, 24, 24, 0.65);
+    border-radius: 22px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.35);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1.5px solid rgba(255,255,255,0.10);
+    max-width: 1200px;
+    margin: 40px auto;
+    padding: 32px 32px 32px 32px;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+
+
+
+
+
+.case-details-header {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    margin-bottom: 0;
+}
+
+.case-thumb {
+    width: 90px;
+    height: 90px;
+    border-radius: 10px;
+    object-fit: contain;
+ 
+}
+
+.case-title {
+    display: flex;
+    align-items: center;
+    font-size: 1.5rem;
+    color: #fff;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.18);
+    margin-left: 10px;
+    margin-top: 3px;
+}
+
+ .case-price {
+    margin-left: auto;
+    font-size: 1.2rem;
+    color: #1aff8c;
+    background: rgba(0,0,0,0.18);
+    border-radius: 6px;
+    padding: 4px 16px;
+    font-weight: 500;
+}
+
+.case-details-actions {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    margin-bottom: 8px;
+}
+
+.back-btn {
+    background: rgba(0,0,0,0.7);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 10px 24px;
+    font-size: 1.1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.2s;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.10);
+}
+
+.back-btn:hover {
+    background: rgba(0,0,0,0.9);
+}
+
+.unlock-btn {
+    background: #00e676;
+    color: #222;
+    border: none;
+    border-radius: 8px;
+    padding: 10px 32px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.10);
+}
+
+.unlock-btn:hover {
+    background: #00c060;
+}
+
+.case-details-actions .case-price {
+    font-size: 1.1rem;
+    color: #1aff8c;
+    background: rgba(0,0,0,0.18);
+    border-radius: 6px;
+    padding: 4px 14px;
+    font-weight: 500;
+}
+
+.case-items-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 18px 18px;
+    border-radius: 4px;
+    margin-top: 1.5rem;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.case-item {
+    background: rgba(0,0,0,0.35);
+    border-radius: 12px;
+    padding: 12px 8px 8px 8px;
+    position: relative;
+    width: 100%;
+    max-width: 220px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 0 auto;
+    transition: transform 0.15s, box-shadow 0.15s;
+    overflow: hidden;
+}
+
+.case-item img {
+    width: 100%;
+    border-radius: 8px 8px 0 0;
+    object-fit: cover;
+    margin-bottom: 0;
+}
+
+.case-details-price {
+    color: #4ade80;
+    background: rgba(0,0,0,0.2);
+    border-radius: 4px;
+    padding: 2px 8px;
+    font-size: 1.15rem;
+    font-weight: 500;
+    pointer-events: none;
+}
+
+.case-details-dash {
+    color: #fff;
+    font-size: 1.15rem;
+    font-weight: 500;
+}
+
+.case-item .case-details-price {
+    font-size: 1rem;
+    margin: 0 2px;
+}
+
+.case-item > div:last-child {
+    color: #fff;
+    font-size: 1rem;
+    text-align: left;
+    width: 100%;
+    margin-top: 4px;
+}
+
+@media (max-width: 700px) {
+    .main-case-details {
+        padding: 12px 2vw;
+    }
+    .case-title {
+        font-size: 1.2rem;
+    }
+    .case-thumb {
+        width: 40px;
+        height: 40px;
+    }
+    .case-items-grid {
+        grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    }
+}
+
+
+
+
+
+/*-------------------------------------------*/
+/*-------------------------------------------*/
+/*-------------------------------------------*/
+/*-------------------------------------------*/
+/*-------------------------------------------*/
+/*-------------------------------------------*/
+/*-------------------------------------------*/
+
+
+#animation-area {
+    position: relative;
+    width: 800px;
+    height: 120px;
+    margin: 0 auto;
+    overflow: hidden;
+    background: rgba(0,0,0,0.7);
+    border-radius: 15px;
+    border: 2px solid rgba(255,255,255,0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .items-strip {
+    display: flex;
+    align-items: center;
+    transition: transform 4s cubic-bezier(0.1, 0.4, 0.4, 1);
+    will-change: transform;
+  }
+  
+  .item-image {
+    width: 100px;
+    height: 100px;
+    margin: 0 5px;
+    border-radius: 10px;
+    background: #222;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: box-shadow 0.3s;
+  }
+  
+  .item-image.winning-item {
+    box-shadow: 0 0 20px 5px #f9d923;
+    border: 2px solid #f9d923;
+  }
+  
+  .case-indicator {
+    position: absolute;
+    left: 50%;
+    top: 0;
+    width: 4px;
+    height: 100%;
+    background: linear-gradient(to bottom, transparent, #f9d923, transparent);
+    transform: translateX(-50%);
+    z-index: 2;
+  }
+
+
+
