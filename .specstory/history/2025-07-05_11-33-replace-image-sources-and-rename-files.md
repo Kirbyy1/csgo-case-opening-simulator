@@ -8274,7 +8274,98 @@ function showWinningPopup(winningIndex, winningCoin) {
   console.log('Actual winning coin:', actualWinningCoin.name);
   
   if (actualCenterCard) {
-    highl
+    highlightWinningCard(actualCenterCard);
+  }
+  
+  // Phase 2: Blur background (300ms delay)
+  setTimeout(() => {
+    blurBackgroundAndDimOthers(actualCenterCard);
+  }, 300);
+  
+  // Phase 3: Play reveal sound (1 second before popup - at 0ms delay)
+  playRarityRevealSound(actualWinningCoin.rarity);
+  
+  // Phase 4: Show popup with winning coin (1000ms delay)
+  setTimeout(() => {
+    showPopupWithFadeIn(actualWinningCoin);
+  }, 1000);
+  
+  // Phase 5: Show button (1400ms delay)
+  setTimeout(() => {
+    showInteractiveButtons();
+  }, 1400);
+}
+
+// Update showPopupWithFadeIn to remove the sound call since it's now played earlier
+function showPopupWithFadeIn(winningCoin) {
+  const popup = document.getElementById('winning-popup');
+  const image = document.getElementById('winning-image');
+  const name = document.getElementById('winning-name');
+  const rarityFade = document.getElementById('winning-rarity');
+  const rarityText = document.getElementById('winning-rarity-text');
+  const value = document.getElementById('winning-value');
+  
+  // Stop the winning card animation when popup appears
+  stopWinningCardAnimation();
+  
+  // Remove this line since sound is now played earlier:
+  // playRarityRevealSound(winningCoin.rarity);
+  
+  // Apply card-style for very small screens
+  if (window.innerWidth <= 380 || window.innerHeight <= 600) {
+    popup.classList.add('card-style');
+  } else {
+    popup.classList.remove('card-style');
+  }
+  
+  // Set the content
+  image.src = winningCoin.image;
+  image.alt = winningCoin.name;
+  name.textContent = winningCoin.name;
+  rarityFade.style.background = winningCoin.gradient;
+  rarityText.textContent = winningCoin.rarity.charAt(0).toUpperCase() + winningCoin.rarity.slice(1);
+  
+  // Add rarity class for color styling
+  rarityText.className = `winning-rarity-text ${winningCoin.rarity}`;
+  
+  value.textContent = winningCoin.value;
+  
+  // Start invisible and animate in from center
+  popup.style.display = 'block';
+  popup.style.opacity = '0';
+  popup.style.setProperty('--popup-scale', '0.8');
+  popup.style.transition = 'all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)';
+  document.querySelector('.blur-vignette').style.display = 'none';
+
+  setTimeout(() => {
+    popup.style.opacity = '1';
+    popup.style.setProperty('--popup-scale', '1');
+  }, 50);
+}
+
+// ... existing code ...
+```
+
+Now the timing sequence is:
+1. **Animation ends** → `showWinningPopup` is called
+2. **Immediately (0ms)**: Reveal sound plays + card highlighting starts
+3. **300ms**: Background blur starts
+4. **1000ms**: Popup appears (sound has been playing for 1 second)
+5. **1400ms**: "Open Again" button appears
+
+The reveal sound will now play 1 second before the popup appears, creating better anticipation and audio-visual synchronization!
+
+---
+
+_**User**_
+
+push to github
+
+---
+
+_**Assistant**_
+
+
 
 ---
 

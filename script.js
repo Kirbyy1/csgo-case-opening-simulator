@@ -147,25 +147,40 @@ function renderCarouselCardsWithArray(coinsArray, winningIndex) {
   const carousel = document.getElementById('carousel');
   carousel.innerHTML = '';
   
+  // Use DocumentFragment for better performance
+  const fragment = document.createDocumentFragment();
+  
   coinsArray.forEach((coin, index) => {
     const card = document.createElement('div');
     card.className = 'case-card';
     
-    if (index === winningIndex) {
-      card.innerHTML = `
-        <div class="center-line"></div>
-        <img src="${coin.image}" alt="${coin.name}">
-        <div class="rarity-fade" style="background: ${coin.gradient};"></div>
-      `;
+    const img = document.createElement('img');
+    img.alt = coin.name;
+    
+    // Use preloaded image if available
+    const preloadedImg = preloadedImages.get(coin.image);
+    if (preloadedImg) {
+      img.src = preloadedImg.src;
     } else {
-      card.innerHTML = `
-        <img src="${coin.image}" alt="${coin.name}">
-        <div class="rarity-fade" style="background: ${coin.gradient};"></div>
-      `;
+      img.src = coin.image;
     }
     
-    carousel.appendChild(card);
+    const rarityFade = document.createElement('div');
+    rarityFade.className = 'rarity-fade';
+    rarityFade.style.background = coin.gradient;
+    
+    if (index === winningIndex) {
+      const centerLine = document.createElement('div');
+      centerLine.className = 'center-line';
+      card.appendChild(centerLine);
+    }
+    
+    card.appendChild(img);
+    card.appendChild(rarityFade);
+    fragment.appendChild(card);
   });
+  
+  carousel.appendChild(fragment);
 }
 
 
@@ -205,44 +220,49 @@ function animateCarouselToIndex(winningIndex, winningCoin) {
 
 
 function startCarouselAnimation() {
-  console.log('Animation started!');
+  console.log('🚀 Starting perfectly centered carousel animation!');
   
-  const cardWidth = 180;
-  const screenWidth = window.innerWidth;
-  const totalScrollDistance = screenWidth + 3000;
-  const cardsNeeded = Math.ceil(totalScrollDistance / cardWidth) + 10;
+  if (!isPreloaded) {
+    console.warn('⚠️ Assets not fully preloaded, animation may be laggy');
+  }
+  
   const centerLines = document.querySelectorAll('.center-line');
   centerLines.forEach(line => {
     line.style.display = 'block';
   });
-  document.querySelector('.blur-vignette').style.display = 'block';
-  console.log('Cards needed:', cardsNeeded);
-  let extendedCoins = [];
-  while (extendedCoins.length < cardsNeeded) {
-    const shuffled = shuffleArray([...memeCoins]);
-    extendedCoins.push(...shuffled);
+  
+  // Ensure blur-vignette is shown consistently across all screen sizes
+  const blurVignette = document.querySelector('.blur-vignette');
+  if (blurVignette) {
+    blurVignette.style.display = 'block';
+    blurVignette.style.opacity = '1';
+    blurVignette.style.visibility = 'visible';
+    console.log('Blur vignette shown for screen size:', window.innerWidth, 'x', window.innerHeight);
+  } else {
+    console.warn('Blur vignette element not found!');
   }
   
-
-  const centerIndex = Math.floor(cardsNeeded * 0.6);
-  
-
-  const winningCoin = pickCoinByOdds(memeCoins);
-  extendedCoins[centerIndex] = winningCoin;
-  
-  console.log('Winning coin:', winningCoin.name, 'placed at index:', centerIndex);
-  
-
-  const extraCardsAfter = 50;
-  for (let i = 0; i < extraCardsAfter; i++) {
-    const randomCoin = memeCoins[Math.floor(Math.random() * memeCoins.length)];
-    extendedCoins.push(randomCoin);
+  // Use pre-generated data if available, otherwise generate new
+  let carouselData;
+  if (preGeneratedCarousel) {
+    carouselData = preGeneratedCarousel;
+    console.log('📦 Using pre-generated perfectly centered carousel data');
+  } else {
+    console.log('🔄 Generating new perfectly centered carousel data');
+    carouselData = generatePerfectlyCenteredCarousel();
   }
   
-  currentExtendedCoins = extendedCoins;
-  console.log('Total cards:', extendedCoins.length, 'Winning at:', centerIndex);
-  renderCarouselCardsWithArray(extendedCoins, centerIndex);
-  animateCarouselToCenter(centerIndex, winningCoin);
+  currentExtendedCoins = carouselData.coins;
+  console.log('Total cards:', carouselData.coins.length, 'Winning at:', carouselData.centerIndex);
+  
+  // Use optimized rendering
+  renderCarouselCardsWithArray(carouselData.coins, carouselData.centerIndex);
+  animateCarouselToPerfectCenter(carouselData.centerIndex, carouselData.winningCoin, carouselData.centering);
+  
+  // Generate new data for next animation
+  setTimeout(() => {
+    preGenerateCarouselData();
+  }, 100);
 }
 
 
@@ -250,39 +270,9 @@ function startCarouselAnimation() {
 
 
 function animateCarouselToCenter(centerIndex, winningCoin) {
-  const carousel = document.getElementById('carousel');
-  if (!carousel) return;
-
-  // Responsive card width based on screen size
-  let cardWidth = 180;
-  if (window.innerWidth <= 480) {
-    cardWidth = 120; // Small mobile
-  } else if (window.innerWidth <= 768) {
-    cardWidth = 140; // Mobile
-  } else if (window.innerWidth <= 1024) {
-    cardWidth = 160; // Tablet
-  }
-
-  const screenCenter = window.innerWidth / 2;
-  const finalPosition = -(centerIndex * cardWidth) + screenCenter - (cardWidth / 2);
-  
-  console.log('Center index:', centerIndex, 'Final position:', finalPosition, 'Card width:', cardWidth);
-  
-  carousel.style.transition = 'none';
-  carousel.style.transform = 'translateX(800px)';
-  
-  setTimeout(() => {
-    carousel.style.transition = 'transform 8s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
-    carousel.style.transform = `translateX(${finalPosition}px)`;
-    
-    // Start deceleration sound sequence
-    startCardBasedDeceleratingSound(); // or use startDeceleratingCardSounds() for time-based
-    
-    setTimeout(() => {
-      console.log('Animation finished, showing popup...');
-      showWinningPopup(centerIndex, winningCoin);
-    }, 8100);
-  }, 200);
+  // Use the new perfect centering system
+  const centering = calculatePerfectCenterPosition();
+  animateCarouselToPerfectCenter(centerIndex, winningCoin, centering);
 }
 
 
@@ -324,23 +314,25 @@ function showWinningPopup(winningIndex, winningCoin) {
     highlightWinningCard(actualCenterCard);
   }
   
-  // Phase 2: Blur background (300ms delay)
+  // Phase 2: Blur background (400ms delay - slightly longer for smoother transition)
   setTimeout(() => {
     blurBackgroundAndDimOthers(actualCenterCard);
-  }, 300);
+  }, 400);
   
-  // Phase 3: Play reveal sound (1 second before popup - at 0ms delay)
-  playRarityRevealSound(actualWinningCoin.rarity);
+  // Phase 3: Play reveal sound (500ms delay - after blur effect starts)
+  setTimeout(() => {
+    playRarityRevealSound(actualWinningCoin.rarity);
+  }, 500);
   
-  // Phase 4: Show popup with winning coin (1000ms delay)
+  // Phase 4: Show popup with winning coin (1200ms delay - more time for sound to settle)
   setTimeout(() => {
     showPopupWithFadeIn(actualWinningCoin);
-  }, 1000);
+  }, 1200);
   
-  // Phase 5: Show button (1400ms delay)
+  // Phase 5: Show button (1700ms delay - more time after popup appears)
   setTimeout(() => {
     showInteractiveButtons();
-  }, 1400);
+  }, 1700);
 }
 
 
@@ -407,7 +399,7 @@ function blurBackgroundAndDimOthers(winningCard) {
 
   allCards.forEach(card => {
     if (card !== winningCard) {
-      card.style.transition = 'filter 0.5s ease, opacity 0.5s ease';
+      card.style.transition = 'filter 0.6s ease, opacity 0.6s ease';
       card.style.filter = 'blur(4px) brightness(0.4)';
       card.style.opacity = '0.6';
     }
@@ -415,9 +407,12 @@ function blurBackgroundAndDimOthers(winningCard) {
 
   const vignette = document.querySelector('.blur-vignette');
   if (vignette) {
-    vignette.style.transition = 'box-shadow 0.5s ease, backdrop-filter 0.5s ease';
+    vignette.style.transition = 'box-shadow 0.6s ease, backdrop-filter 0.6s ease';
     vignette.style.boxShadow = '0 0 0 9999px rgba(20,22,30,0.8) inset';
     vignette.style.backdropFilter = 'blur(12px) saturate(0.5)';
+    console.log('Blur vignette enhanced for screen size:', window.innerWidth, 'x', window.innerHeight);
+  } else {
+    console.warn('Blur vignette not found during blurBackgroundAndDimOthers!');
   }
 }
 
@@ -457,17 +452,25 @@ function showPopupWithFadeIn(winningCoin) {
   
   value.textContent = winningCoin.value;
   
-  // Start invisible and animate in from center
+  // Start invisible and animate in from center with smoother timing
   popup.style.display = 'block';
   popup.style.opacity = '0';
-  popup.style.setProperty('--popup-scale', '0.8');
-  popup.style.transition = 'all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)';
-  document.querySelector('.blur-vignette').style.display = 'none';
+  popup.style.setProperty('--popup-scale', '0.7');
+  popup.style.transition = 'all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1)';
+  
+  // Ensure blur-vignette is hidden consistently across all screen sizes
+  const blurVignette = document.querySelector('.blur-vignette');
+  if (blurVignette) {
+    blurVignette.style.display = 'none';
+    blurVignette.style.opacity = '0';
+    blurVignette.style.visibility = 'hidden';
+  }
 
+  // Slightly longer delay for smoother animation
   setTimeout(() => {
     popup.style.opacity = '1';
     popup.style.setProperty('--popup-scale', '1');
-  }, 50);
+  }, 100);
 }
 
 
@@ -478,17 +481,15 @@ function showInteractiveButtons() {
   const button = document.querySelector('.btn-again');
   
   if (button) {
-    button.style.transition = 'all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)';
+    button.style.transition = 'all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1)';
     button.style.opacity = '0';
-    button.style.transform = 'translateY(20px)';
+    button.style.transform = 'translateY(30px) scale(0.9)';
     
     setTimeout(() => {
       button.style.opacity = '1';
-      button.style.transform = 'translateY(0)';
-    }, 100);
+      button.style.transform = 'translateY(0) scale(1)';
+    }, 150);
     
- 
-
     button.onclick = () => openAgain();
   }
 }
@@ -500,6 +501,16 @@ function showInteractiveButtons() {
 function openAgain() {
   const popup = document.getElementById('winning-popup');
   popup.style.opacity = '0';
+  
+  // Reset blur-vignette state before starting new animation
+  const blurVignette = document.querySelector('.blur-vignette');
+  if (blurVignette) {
+    blurVignette.style.display = 'none';
+    blurVignette.style.opacity = '0';
+    blurVignette.style.visibility = 'hidden';
+    blurVignette.style.boxShadow = 'none';
+    blurVignette.style.backdropFilter = 'none';
+  }
   
   setTimeout(() => {
     startCarouselAnimation();
@@ -521,46 +532,69 @@ function getExtendedCoinsArray() {
 
 
 
+// Single, properly synchronized unlock button handler
 document.querySelector('.unlock-btn').onclick = function() {
   console.log('Unlock button clicked!');
   
-  // Play unlock sound first
+  // Disable the button to prevent multiple clicks
+  const unlockBtn = document.querySelector('.unlock-btn');
+  unlockBtn.disabled = true;
+  unlockBtn.style.opacity = '0.6';
+  unlockBtn.style.cursor = 'not-allowed';
+  
+  // Play unlock sound with proper synchronization
   const unlockAudio = new Audio('sounds/case_unlock_01.mp3');
   unlockAudio.volume = 0.4;
   
-  unlockAudio.play().then(() => {
-    // Wait for sound to finish, then switch layout and start animation
-    unlockAudio.addEventListener('ended', () => {
-      console.log('Unlock sound finished, switching to carousel...');
-      document.querySelector('.main-case-details').style.display = 'none';
-      document.getElementById('carousel-view').style.display = 'flex';
-      startCarouselAnimation();
+  // Get the actual duration of the audio file for precise timing
+  unlockAudio.addEventListener('loadedmetadata', () => {
+    const soundDuration = unlockAudio.duration * 700; // Convert to milliseconds
+    console.log('Unlock sound duration:', soundDuration, 'ms');
+    
+    // Play the sound
+    unlockAudio.play().then(() => {
+      // Wait for the exact duration of the sound before switching
+      setTimeout(() => {
+        console.log('Unlock sound finished, switching to carousel...');
+        document.querySelector('.main-case-details').style.display = 'none';
+        document.getElementById('carousel-view').style.display = 'flex';
+        startCarouselAnimation();
+        
+        // Re-enable the button
+        unlockBtn.disabled = false;
+        unlockBtn.style.opacity = '1';
+        unlockBtn.style.cursor = 'pointer';
+      }, soundDuration);
+    }).catch(e => {
+      console.log('Sound play failed, using fallback timing:', e);
+      // Fallback: use estimated duration if audio loading fails
+      setTimeout(() => {
+        document.querySelector('.main-case-details').style.display = 'none';
+        document.getElementById('carousel-view').style.display = 'flex';
+        startCarouselAnimation();
+        
+        // Re-enable the button
+        unlockBtn.disabled = false;
+        unlockBtn.style.opacity = '1';
+        unlockBtn.style.cursor = 'pointer';
+      }, 1800); // Fallback duration
     });
-  }).catch(e => {
-    console.log('Sound play failed, proceeding anyway:', e);
-    // Fallback: wait for estimated sound duration then proceed
+  });
+  
+  // Fallback if audio metadata fails to load
+  unlockAudio.addEventListener('error', () => {
+    console.log('Audio metadata failed to load, using fallback timing');
     setTimeout(() => {
       document.querySelector('.main-case-details').style.display = 'none';
       document.getElementById('carousel-view').style.display = 'flex';
       startCarouselAnimation();
-    }, 1800); // Adjust this based on your sound file duration
+      
+      // Re-enable the button
+      unlockBtn.disabled = false;
+      unlockBtn.style.opacity = '1';
+      unlockBtn.style.cursor = 'pointer';
+    }, 1800);
   });
-};
-
-// Alternative: Fixed delay approach
-document.querySelector('.unlock-btn').onclick = function() {
-  console.log('Unlock button clicked!');
-  
-  // Play unlock sound
-  playSound('sounds/case_unlock_01.mp3');
-  
-  // Wait for sound to finish before switching layout
-  setTimeout(() => {
-    console.log('Sound finished, switching to carousel...');
-    document.querySelector('.main-case-details').style.display = 'none';
-    document.getElementById('carousel-view').style.display = 'flex';
-    startCarouselAnimation();
-  }, 1800); // Adjust this timing to match your sound file duration
 };
 
 document.getElementById('back-btn2').onclick = function() {
@@ -579,12 +613,43 @@ window.addEventListener('resize', function() {
     // If carousel is active, recalculate positions
     if (document.getElementById('carousel-view').style.display !== 'none') {
       console.log('Window resized, layout may need adjustment');
+      
+      // Check blur-vignette state after resize
+      const blurVignette = document.querySelector('.blur-vignette');
+      if (blurVignette) {
+        console.log('Blur vignette state after resize:', {
+          display: blurVignette.style.display,
+          opacity: blurVignette.style.opacity,
+          visibility: blurVignette.style.visibility,
+          screenSize: `${window.innerWidth}x${window.innerHeight}`
+        });
+      }
     }
   }, 250);
 });
 
 // Add touch event handling for better mobile experience
 document.addEventListener('DOMContentLoaded', function() {
+  // Initialize blur-vignette state
+  const blurVignette = document.querySelector('.blur-vignette');
+  if (blurVignette) {
+    blurVignette.style.display = 'none';
+    blurVignette.style.opacity = '0';
+    blurVignette.style.visibility = 'hidden';
+    console.log('Blur vignette initialized for screen size:', window.innerWidth, 'x', window.innerHeight);
+  }
+  
+  // Show loading state on unlock button
+  const unlockBtn = document.querySelector('.unlock-btn');
+  if (unlockBtn) {
+    unlockBtn.style.opacity = '0.7';
+    unlockBtn.innerHTML = unlockBtn.innerHTML.replace('UNLOCK CASE', 'Loading...');
+  }
+  
+  // Start preloading assets
+  preloadAssets();
+  preGenerateCarouselData();
+  
   // Prevent zoom on double tap for better UX
   let lastTouchEnd = 0;
   document.addEventListener('touchend', function (event) {
@@ -595,7 +660,6 @@ document.addEventListener('DOMContentLoaded', function() {
     lastTouchEnd = now;
   }, false);
   
-  // Add touch feedback for buttons
   const buttons = document.querySelectorAll('button');
   buttons.forEach(button => {
     button.addEventListener('touchstart', function() {
@@ -628,9 +692,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 // Add sound playing function
 function playSound(soundFile) {
-  const audio = new Audio(soundFile);
-  audio.volume = 0.3; // Adjust volume as needed
-  audio.play().catch(e => console.log('Sound play failed:', e));
+  playPreloadedSound(soundFile);
 }
 
 // Function to play sounds that match the visual deceleration
@@ -780,3 +842,360 @@ function playRarityRevealSound(rarity) {
   playSound(soundFile);
 }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// === PRELOADING SYSTEM FOR SMOOTH ANIMATIONS ===
+let preloadedImages = new Map();
+let preloadedSounds = new Map();
+let isPreloaded = false;
+
+function preloadAssets() {
+  console.log('🚀 Starting asset preloading...');
+  
+  // Preload all coin images
+  const imagePromises = memeCoins.map(coin => {
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      img.onload = () => {
+        preloadedImages.set(coin.image, img);
+        console.log(`✅ Preloaded image: ${coin.name}`);
+        resolve();
+      };
+      img.onerror = () => {
+        console.warn(`❌ Failed to preload image: ${coin.name}`);
+        reject();
+      };
+      img.src = coin.image;
+    });
+  });
+  
+  // Preload all sound files
+  const soundFiles = [
+    'sounds/case_unlock_01.mp3',
+    'sounds/csgo_ui_crate_item_scroll.mp3',
+    'sounds/case_reveal_rare_01.mp3',
+    'sounds/case_reveal_legendary_01.mp3',
+    'sounds/case_reveal_mythical_01.mp3',
+    'sounds/case_reveal_ancient_01.mp3'
+  ];
+  
+  const soundPromises = soundFiles.map(soundFile => {
+    return new Promise((resolve, reject) => {
+      const audio = new Audio();
+      audio.addEventListener('canplaythrough', () => {
+        preloadedSounds.set(soundFile, audio);
+        console.log(`🔊 Preloaded sound: ${soundFile}`);
+        resolve();
+      });
+      audio.addEventListener('error', () => {
+        console.warn(`❌ Failed to preload sound: ${soundFile}`);
+        reject();
+      });
+      audio.src = soundFile;
+      audio.load();
+    });
+  });
+  
+  // Wait for all assets to load
+  Promise.allSettled([...imagePromises, ...soundPromises]).then(() => {
+    isPreloaded = true;
+    console.log('🎉 Asset preloading completed!');
+    
+    // Enable unlock button with visual feedback
+    const unlockBtn = document.querySelector('.unlock-btn');
+    if (unlockBtn) {
+      unlockBtn.style.opacity = '1';
+      unlockBtn.style.filter = 'brightness(1.1)';
+      unlockBtn.innerHTML = unlockBtn.innerHTML.replace('Loading...', 'UNLOCK CASE');
+    }
+  });
+}
+
+// Pre-generate carousel data for smoother animation
+let preGeneratedCarousel = null;
+
+function preGenerateCarouselData() {
+  const carouselData = generatePerfectlyCenteredCarousel();
+  preGeneratedCarousel = carouselData;
+  console.log('🎰 Pre-generated perfectly centered carousel data:', preGeneratedCarousel.coins.length, 'cards');
+}
+
+// Enhanced sound playing function that uses preloaded sounds
+function playPreloadedSound(soundFile) {
+  const preloadedAudio = preloadedSounds.get(soundFile);
+  if (preloadedAudio) {
+    // Clone the audio to allow multiple simultaneous plays
+    const audio = preloadedAudio.cloneNode();
+    audio.volume = 0.3;
+    audio.play().catch(e => console.log('Preloaded sound play failed:', e));
+  } else {
+    // Fallback to regular sound loading
+    const audio = new Audio(soundFile);
+    audio.volume = 0.3;
+    audio.play().catch(e => console.log('Fallback sound play failed:', e));
+  }
+}
+
+// Enhanced render function that uses preloaded images
+function renderCarouselCardsWithArrayOptimized(coinsArray, winningIndex) {
+  const carousel = document.getElementById('carousel');
+  carousel.innerHTML = '';
+  
+  // Use DocumentFragment for better performance
+  const fragment = document.createDocumentFragment();
+  
+  coinsArray.forEach((coin, index) => {
+    const card = document.createElement('div');
+    card.className = 'case-card';
+    
+    const img = document.createElement('img');
+    img.alt = coin.name;
+    
+    // Use preloaded image if available
+    const preloadedImg = preloadedImages.get(coin.image);
+    if (preloadedImg) {
+      img.src = preloadedImg.src;
+    } else {
+      img.src = coin.image;
+    }
+    
+    const rarityFade = document.createElement('div');
+    rarityFade.className = 'rarity-fade';
+    rarityFade.style.background = coin.gradient;
+    
+    if (index === winningIndex) {
+      const centerLine = document.createElement('div');
+      centerLine.className = 'center-line';
+      card.appendChild(centerLine);
+    }
+    
+    card.appendChild(img);
+    card.appendChild(rarityFade);
+    fragment.appendChild(card);
+  });
+  
+  carousel.appendChild(fragment);
+}
+
+// Enhanced carousel animation that uses pre-generated data
+function startCarouselAnimationOptimized() {
+  console.log('🚀 Starting optimized carousel animation!');
+  
+  if (!isPreloaded) {
+    console.warn('⚠️ Assets not fully preloaded, animation may be laggy');
+  }
+  
+  const centerLines = document.querySelectorAll('.center-line');
+  centerLines.forEach(line => {
+    line.style.display = 'block';
+  });
+  
+  // Ensure blur-vignette is shown consistently across all screen sizes
+  const blurVignette = document.querySelector('.blur-vignette');
+  if (blurVignette) {
+    blurVignette.style.display = 'block';
+    blurVignette.style.opacity = '1';
+    blurVignette.style.visibility = 'visible';
+    console.log('Blur vignette shown for screen size:', window.innerWidth, 'x', window.innerHeight);
+  } else {
+    console.warn('Blur vignette element not found!');
+  }
+  
+  // Use pre-generated data if available, otherwise generate new
+  let carouselData;
+  if (preGeneratedCarousel) {
+    carouselData = preGeneratedCarousel;
+    console.log('📦 Using pre-generated carousel data');
+  } else {
+    console.log('🔄 Generating new carousel data (not optimal)');
+    const cardWidth = 180;
+    const screenWidth = window.innerWidth;
+    const totalScrollDistance = screenWidth + 3000;
+    const cardsNeeded = Math.ceil(totalScrollDistance / cardWidth) + 10;
+    
+    let extendedCoins = [];
+    while (extendedCoins.length < cardsNeeded) {
+      const shuffled = shuffleArray([...memeCoins]);
+      extendedCoins.push(...shuffled);
+    }
+    
+    const centerIndex = Math.floor(cardsNeeded * 0.6);
+    const winningCoin = pickCoinByOdds(memeCoins);
+    extendedCoins[centerIndex] = winningCoin;
+    
+    const extraCardsAfter = 50;
+    for (let i = 0; i < extraCardsAfter; i++) {
+      const randomCoin = memeCoins[Math.floor(Math.random() * memeCoins.length)];
+      extendedCoins.push(randomCoin);
+    }
+    
+    carouselData = {
+      coins: extendedCoins,
+      centerIndex: centerIndex,
+      winningCoin: winningCoin
+    };
+  }
+  
+  currentExtendedCoins = carouselData.coins;
+  console.log('Total cards:', carouselData.coins.length, 'Winning at:', carouselData.centerIndex);
+  
+  // Use optimized rendering
+  renderCarouselCardsWithArrayOptimized(carouselData.coins, carouselData.centerIndex);
+  animateCarouselToCenter(carouselData.centerIndex, carouselData.winningCoin);
+  
+  // Generate new data for next animation
+  setTimeout(() => {
+    preGenerateCarouselData();
+  }, 100);
+}
+
+// === PERFECT CENTERING SYSTEM ===
+function calculatePerfectCenterPosition() {
+  // Get responsive card width and spacing
+  let cardWidth = 160; // Base card width
+  let cardSpacing = 20; // Total spacing (10px margin on each side)
+  let totalCardWidth = cardWidth + cardSpacing;
+  
+  if (window.innerWidth <= 480) {
+    cardWidth = 100; // Small mobile
+    cardSpacing = 8; // 4px margin on each side
+    totalCardWidth = cardWidth + cardSpacing;
+  } else if (window.innerWidth <= 768) {
+    cardWidth = 120; // Mobile
+    cardSpacing = 16; // 8px margin on each side
+    totalCardWidth = cardWidth + cardSpacing;
+  } else if (window.innerWidth <= 1024) {
+    cardWidth = 140; // Tablet
+    cardSpacing = 18; // 9px margin on each side
+    totalCardWidth = cardWidth + cardSpacing;
+  }
+  
+  const screenWidth = window.innerWidth;
+  const screenCenter = screenWidth / 2;
+  
+  // Calculate how many cards we need to fill the screen plus extra for animation
+  const cardsToFillScreen = Math.ceil(screenWidth / totalCardWidth) + 20; // Extra cards for smooth animation
+  
+  // Calculate the total width of all cards
+  const totalCardsWidth = cardsToFillScreen * totalCardWidth;
+  
+  // Calculate the center index (middle of the carousel)
+  const centerIndex = Math.floor(cardsToFillScreen / 2);
+  
+  // Calculate the position that centers the winning card
+  const winningCardCenter = centerIndex * totalCardWidth;
+  const finalPosition = screenCenter - winningCardCenter - (cardWidth / 2);
+  
+  console.log('🎯 Perfect centering calculation:', {
+    screenWidth,
+    screenCenter,
+    cardWidth,
+    cardSpacing,
+    totalCardWidth,
+    cardsToFillScreen,
+    centerIndex,
+    winningCardCenter,
+    finalPosition
+  });
+  
+  return {
+    centerIndex,
+    finalPosition,
+    totalCardsWidth,
+    cardWidth,
+    cardSpacing
+  };
+}
+
+function generatePerfectlyCenteredCarousel() {
+  const centering = calculatePerfectCenterPosition();
+  const { centerIndex, totalCardsWidth, cardWidth, cardSpacing } = centering;
+  
+  // Generate enough cards to fill the calculated width plus extra
+  const totalCardsNeeded = Math.ceil(totalCardsWidth / (cardWidth + cardSpacing)) + 50; // Extra for smooth animation
+  
+  let extendedCoins = [];
+  while (extendedCoins.length < totalCardsNeeded) {
+    const shuffled = shuffleArray([...memeCoins]);
+    extendedCoins.push(...shuffled);
+  }
+  
+  // Place winning coin at the calculated center
+  const winningCoin = pickCoinByOdds(memeCoins);
+  extendedCoins[centerIndex] = winningCoin;
+  
+  console.log('🎰 Generated perfectly centered carousel:', {
+    totalCards: extendedCoins.length,
+    winningIndex: centerIndex,
+    winningCoin: winningCoin.name
+  });
+  
+  return {
+    coins: extendedCoins,
+    centerIndex: centerIndex,
+    winningCoin: winningCoin,
+    centering: centering
+  };
+}
+
+function animateCarouselToPerfectCenter(centerIndex, winningCoin, centering) {
+  const carousel = document.getElementById('carousel');
+  if (!carousel) return;
+
+  const { finalPosition, cardWidth } = centering;
+  
+  console.log('🎯 Animating to perfect center:', {
+    centerIndex,
+    finalPosition,
+    cardWidth,
+    screenWidth: window.innerWidth
+  });
+  
+  carousel.style.transition = 'none';
+  carousel.style.transform = 'translateX(800px)';
+  
+  setTimeout(() => {
+    carousel.style.transition = 'transform 8s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
+    carousel.style.transform = `translateX(${finalPosition}px)`;
+    
+    // Start deceleration sound sequence
+    startCardBasedDeceleratingSound();
+    
+    setTimeout(() => {
+      console.log('Animation finished, showing popup...');
+      showWinningPopup(centerIndex, winningCoin);
+    }, 8100);
+  }, 200);
+}
