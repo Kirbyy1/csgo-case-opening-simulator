@@ -328,54 +328,1944 @@ img:hover {
 /*-------------------------------------------*/
 
 
-#animation-area {
+#carousel-view {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: rgba(20, 22, 30, 0.85);
+    backdrop-filter: blur(8px) saturate(0.7);
+    transition: opacity 0.3s;
+  }
+  
+  #carousel {
     position: relative;
-    width: 800px;
-    height: 120px;
-    margin: 0 auto;
-    overflow: hidden;
-    background: rgba(0,0,0,0.7);
-    border-radius: 15px;
-    border: 2px solid rgba(255,255,255,0.2);
     display: flex;
     align-items: center;
-    justify-content: center;
+    height: 260px;
+    z-index: 2;
+    /* Remove any conflicting styles */
+    width: max-content; /* Allow it to be wider than container */
   }
-  
-  .items-strip {
+  #carousel {
+    position: relative;
     display: flex;
     align-items: center;
-    transition: transform 4s cubic-bezier(0.1, 0.4, 0.4, 1);
-    will-change: transform;
-  }
-  
-  .item-image {
-    width: 100px;
-    height: 100px;
-    margin: 0 5px;
-    border-radius: 10px;
-    background: #222;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: box-shadow 0.3s;
-  }
-  
-  .item-image.winning-item {
-    box-shadow: 0 0 20px 5px #f9d923;
-    border: 2px solid #f9d923;
-  }
-  
-  .case-indicator {
-    position: absolute;
-    left: 50%;
-    top: 0;
-    width: 4px;
-    height: 100%;
-    background: linear-gradient(to bottom, transparent, #f9d923, transparent);
-    transform: translateX(-50%);
+    height: 260px;
     z-index: 2;
   }
+  
+  .case-card {
+    position: relative;
+    width: 160px;
+    height: 220px;
+    background: #393b44; /* CS:GO dark blue/grey */
+    border-radius: 6px;
+    margin: 0 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.22);
+    border: 2px solid #23242a;
+    overflow: visible;
+    transition: box-shadow 0.2s, border 0.2s;
+  }
+
+  .case-card::after {
+    content: "";
+    position: absolute;
+    left: 0; right: 0; bottom: 0;
+    height: 2px;
+    background: #181a1f;
+    z-index: 10;
+  }
+
+  .rarity-fade {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 28px; /* Adjust for your card size */
+    border-radius: 0 0 6px 6px;
+    opacity: 1;
+    filter: none; /* Remove blur for a crisp look */
+    pointer-events: none;
+    z-index: 5;
+    /* The background is set inline from JS using coin.gradient */
+  }
+  
+  .case-card img {
+    max-width: 110px;
+    max-height: 110px;
+    object-fit: contain;
+    margin-bottom: 0;
+    margin-top: 10px;
+    filter: drop-shadow(0 2px 8px rgba(0,0,0,0.25));
+  }
+  
+  .center-line {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 3px;
+    height: 220px; /* match .case-card height */
+    background: linear-gradient(to bottom, #ffe066 0%, #ffd700 100%);
+    border-radius: 2px;
+    z-index: 10;
+    transform: translate(-50%, -50%);
+    box-shadow: 0 0 8px 1px #ffe06699;
+    pointer-events: none;
+  }
+  
+  .blur-vignette {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 100vw;
+    height: 100vh;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+    z-index: 998;
+  
+    /* Blur everything behind this div */
+    backdrop-filter: blur(14px) saturate(0.7);
+    -webkit-backdrop-filter: blur(14px) saturate(0.7);
+  
+    /* Create transparent circle in the center */          
+      mask-image: radial-gradient(circle at center, transparent 25%, black 70%);
+    -webkit-mask-image: radial-gradient(circle at center, transparent 25%, black 70%);
+  }
+  
+  /* Optional: add the visible circle border */
+  .blur-vignette::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 600px;
+    height: 600px;
+    transform: translate(-50%, -50%);
+    border-radius: 50%;
+    border: 2px solid rgba(255, 255, 255, 0.2); /* or brighter */
+    box-shadow: 0 0 40px rgba(255, 255, 255, 0.1); /* soft glow */
+  }
+  
+  
+  #back-btn2 {
+    position: absolute;
+    top: 32px;
+    left: 32px;
+    z-index: 20;
+    background: rgba(30,32,40,0.85);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 10px 18px;
+    font-size: 1.1rem;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.10);
+    transition: background 0.2s;
+    z-index: 999;
+  }
+  #back-btn2:hover {
+    background: rgba(40,44,60,0.95);
+  }
 
 
 
+
+
+  #carousel .case-card img:hover,
+#carousel .case-card img {
+  transform: none !important;
+  z-index: auto !important;
+  transition: none !important;
+  box-shadow: none !important;
+}
+
+#winning-popup {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 100;
+  opacity: 0;
+  scale: 0.8;
+  transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+#winning-popup.show {
+  opacity: 1;
+  scale: 1;
+}
+
+.winning-card {
+  background: rgba(30,32,40,0.95);
+  border-radius: 16px;
+  padding: 24px;
+  margin-bottom: 20px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+  border: 2px solid rgba(255,255,255,0.1);
+  text-align: center;
+  min-width: 300px;
+}
+
+.winning-item {
+  position: relative;
+  width: 200px;
+  height: 200px;
+  background: #393b44;
+  border-radius: 12px;
+  margin: 0 auto 20px auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.winning-item img {
+  max-width: 120px;
+  max-height: 120px;
+  object-fit: contain;
+  filter: drop-shadow(0 4px 12px rgba(0,0,0,0.3));
+}
+
+.winning-rarity-fade {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 40px;
+  border-radius: 0 0 12px 12px;
+  opacity: 1;
+}
+
+.winning-info h2 {
+  color: #fff;
+  font-size: 1.5rem;
+  margin: 0 0 12px 0;
+  font-weight: 600;
+}
+
+.winning-details {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.winning-rarity-text {
+  font-weight: bold;
+  text-transform: uppercase;
+  font-size: 14px;
+  margin-top: 5px;
+}
+
+/* Rarity text colors */
+.winning-rarity-text.common {
+  color: #1a8cff;
+}
+
+.winning-rarity-text.rare {
+  color: hsl(279, 97%, 49%);
+}
+
+.winning-rarity-text.epic {
+  color: #d21dba;
+}
+
+.winning-rarity-text.legendary {
+  color: #ec2603;
+}
+
+.winning-rarity-text.mythical {
+  color: #f8e117;
+}
+
+.winning-value {
+  color: #00e676;
+  font-weight: 600;
+  font-size: 1.2rem;
+}
+
+.winning-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+}
+
+.winning-actions button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+
+
+.btn-again {
+  background: #00e676;
+  color: #222;
+  width: 80%;
+  font-size: larger;
+}
+
+.btn-again:hover {
+  background: #00c060;
+}
+
+.floating-winner {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0.8);
+  z-index: 100;
+  opacity: 0;
+  transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.floating-winner.revealed {
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1.2);
+}
+
+.floating-item {
+  position: relative;
+  width: 250px;
+  height: 250px;
+  background: #393b44;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  box-shadow: 0 8px 40px rgba(0,0,0,0.4);
+}
+
+.floating-item img {
+  max-width: 150px;
+  max-height: 150px;
+  object-fit: contain;
+  filter: drop-shadow(0 4px 16px rgba(0,0,0,0.4));
+  z-index: 2;
+}
+
+.winner-glow {
+  position: absolute;
+  inset: -20px;
+  background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+  border-radius: 50%;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+.winner-rarity-fade {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 50px;
+  border-radius: 0 0 16px 16px;
+  opacity: 1;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 0.3; transform: scale(1); }
+  50% { opacity: 0.6; transform: scale(1.05); }
+}
+
+
+
+.winning-card {
+  background: rgba(30,32,40,0.95);
+  border-radius: 20px;
+  padding: 40px;
+  margin-bottom: 30px;
+  box-shadow: 0 12px 48px rgba(0,0,0,0.4);
+  border: 2px solid rgba(255,255,255,0.1);
+  text-align: center;
+  min-width: 400px;
+}
+
+.winning-item {
+  position: relative;
+  width: 280px;
+  height: 280px;
+  background: #393b44;
+  border-radius: 16px;
+  margin: 0 auto 30px auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+}
+
+.winning-item img {
+  max-width: 180px;
+  max-height: 180px;
+  object-fit: contain;
+  filter: drop-shadow(0 4px 16px rgba(0,0,0,0.3));
+}
+
+.winning-info h2 {
+  color: #fff;
+  font-size: 2rem;
+  margin: 0 0 20px 0;
+  font-weight: 600;
+}
+
+.winning-details {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.winning-rarity-text {
+  color: #1a8cff;
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 1.1rem;
+}
+
+.winning-value {
+  color: #00e676;
+  font-weight: 700;
+  font-size: 1.5rem;
+}
+
+.winning-actions {
+  display: flex;
+  justify-content: center;
+}
+
+.btn-again {
+  background: #00e676;
+  color: #222;
+  padding: 14px 32px;
+  border: none;
+  border-radius: 10px;
+  font-size: 1.2rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+.btn-again:hover {
+  background: #00c060;
+  transform: translateY(18px) scale(1.05);
+}
+
+.winning-popup {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(var(--popup-scale, 1));
+  width: 400px;
+  max-width: 90vw; /* Ensure it fits on smaller screens */
+  background: linear-gradient(135deg, #2a2a2a 0%, #1a1a1a 100%);
+  border-radius: 12px;
+  padding: 30px;
+  text-align: center;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+  z-index: 1001;
+  opacity: 0;
+  display: none;
+  margin: 0; /* Remove any default margins */
+  /* Center it exactly where the vignette circle is */
+}
+
+/* Add these responsive improvements */
+
+/* Mobile-first approach - update existing media queries */
+@media (max-width: 768px) {
+  header {
+    padding: 15px 10px;
+  }
+  
+  header h1 {
+    font-size: 1.5rem;
+  }
+  
+  main {
+    margin: 10px auto 0 auto;
+    padding: 20px 15px;
+    width: 95%;
+    height: auto;
+    min-height: 70vh;
+  }
+  
+  .main-case-details {
+    margin: 20px auto;
+    padding: 20px 15px;
+    width: 95%;
+  }
+  
+  .case-details-header {
+    flex-direction: column;
+    text-align: center;
+    gap: 10px;
+  }
+  
+  .case-thumb {
+    width: 60px;
+    height: 60px;
+  }
+  
+  .case-title {
+    font-size: 1.2rem;
+    margin-left: 0;
+  }
+  
+  .case-details-actions {
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .case-details-actions .case-price {
+    order: -1;
+    align-self: center;
+  }
+  
+  .case-items-grid {
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 12px;
+  }
+  
+  .case-item {
+    max-width: none;
+  }
+  
+  /* Carousel optimizations for mobile */
+  #carousel-view {
+    padding: 10px;
+  }
+  
+  #back-btn2 {
+    top: 20px;
+    left: 20px;
+    padding: 8px 12px;
+    font-size: 0.9rem;
+  }
+  
+  .case-card {
+    width: 120px;
+    height: 180px;
+    margin: 0 5px;
+  }
+  
+  .case-card img {
+    max-width: 80px;
+    max-height: 80px;
+  }
+  
+  .center-line {
+    height: 180px;
+  }
+  
+  .winning-popup {
+    width: 90vw;
+    max-width: 350px;
+    padding: 20px;
+    margin: 20px;
+  }
+  
+  .winning-card {
+    min-width: auto;
+    padding: 20px;
+  }
+  
+  .winning-item {
+    width: 200px;
+    height: 200px;
+    margin-bottom: 15px;
+  }
+  
+  .winning-item img {
+    max-width: 120px;
+    max-height: 120px;
+  }
+  
+  .winning-info h2 {
+    font-size: 1.3rem;
+    margin-bottom: 10px;
+  }
+  
+  .winning-details {
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 15px;
+  }
+  
+  .winning-value {
+    font-size: 1.2rem;
+  }
+  
+  .btn-again {
+    padding: 12px 24px;
+    font-size: 1rem;
+  }
+  
+  .blur-vignette::before {
+    width: 400px;
+    height: 400px;
+  }
+}
+
+/* Tablet optimizations */
+@media (min-width: 769px) and (max-width: 1024px) {
+  main {
+    width: 85%;
+    padding: 30px 20px;
+  }
+  
+  .main-case-details {
+    width: 90%;
+    padding: 25px 20px;
+  }
+  
+  .case-items-grid {
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 15px;
+  }
+  
+  .case-card {
+    width: 140px;
+    height: 200px;
+  }
+  
+  .case-card img {
+    max-width: 90px;
+    max-height: 90px;
+  }
+  
+  .center-line {
+    height: 200px;
+  }
+  
+  .winning-popup {
+    width: 80vw;
+    max-width: 400px;
+  }
+}
+
+/* Small mobile devices */
+@media (max-width: 480px) {
+  header {
+    padding: 10px;
+  }
+  
+  header h1 {
+    font-size: 1.2rem;
+  }
+  
+  header p {
+    font-size: 0.9rem;
+  }
+  
+  main {
+    margin: 5px auto 0 auto;
+    padding: 15px 10px;
+    width: 98%;
+  }
+  
+  .main-case-details {
+    margin: 10px auto;
+    padding: 15px 10px;
+    width: 98%;
+  }
+  
+  .case-details-header {
+    gap: 8px;
+  }
+  
+  .case-thumb {
+    width: 50px;
+    height: 50px;
+  }
+  
+  .case-title {
+    font-size: 1rem;
+  }
+  
+  .unlock-btn, .back-btn {
+    padding: 8px 16px;
+    font-size: 0.9rem;
+  }
+  
+  .case-items-grid {
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 8px;
+  }
+  
+  .case-card {
+    width: 100px;
+    height: 150px;
+    margin: 0 3px;
+  }
+  
+  .case-card img {
+    max-width: 60px;
+    max-height: 60px;
+  }
+  
+  .center-line {
+    height: 150px;
+    width: 2px;
+  }
+  
+  .winning-popup {
+    width: 95vw;
+    padding: 15px;
+  }
+  
+  .winning-item {
+    width: 150px;
+    height: 150px;
+  }
+  
+  .winning-item img {
+    max-width: 80px;
+    max-height: 80px;
+  }
+  
+  .winning-info h2 {
+    font-size: 1.1rem;
+  }
+  
+  .winning-value {
+    font-size: 1rem;
+  }
+  
+  .btn-again {
+    padding: 10px 20px;
+    font-size: 0.9rem;
+  }
+  
+  .blur-vignette::before {
+    width: 300px;
+    height: 300px;
+  }
+}
+
+/* Large screens */
+@media (min-width: 1440px) {
+  main {
+    max-width: 1400px;
+  }
+  
+  .main-case-details {
+    max-width: 1400px;
+  }
+  
+  .case-items-grid {
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  }
+}
+
+/* Landscape orientation for mobile */
+@media (max-height: 500px) and (orientation: landscape) {
+  main {
+    height: auto;
+    min-height: 60vh;
+    padding: 20px 15px;
+  }
+  
+  .main-case-details {
+    margin: 15px auto;
+  }
+  
+  .case-items-grid {
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  }
+  
+  .winning-popup {
+    width: 70vw;
+    max-height: 80vh;
+    overflow-y: auto;
+  }
+  
+  .winning-item {
+    width: 150px;
+    height: 150px;
+  }
+}
+
+/* Touch device optimizations */
+@media (hover: none) and (pointer: coarse) {
+  .unlock-btn, .back-btn, .btn-again, #back-btn2 {
+    min-height: 44px; /* Minimum touch target size */
+    padding: 12px 20px;
+  }
+  
+  .case-image {
+    transition: none; /* Remove hover effects on touch devices */
+  }
+  
+  .case-image:hover {
+    transform: none;
+  }
+}
+
+/* iPhone-specific optimizations */
+@media (max-width: 480px) {
+  /* Improved header for iPhone */
+  header {
+    padding: 20px 15px;
+    background: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(10px);
+  }
+  
+  header h1 {
+    font-size: 1.4rem;
+    font-weight: 700;
+    margin-bottom: 5px;
+  }
+  
+  header p {
+    font-size: 0.9rem;
+    opacity: 0.8;
+  }
+  
+  /* Better main container for iPhone */
+  main {
+    margin: 15px auto 0 auto;
+    padding: 25px 20px;
+    width: 92%;
+    border-radius: 25px;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+  }
+  
+  /* Improved case details layout for iPhone */
+  .main-case-details {
+    margin: 15px auto;
+    padding: 25px 20px;
+    width: 92%;
+    border-radius: 25px;
+    background: rgba(24, 24, 24, 0.8);
+    backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+  }
+  
+  /* Better case header layout */
+  .case-details-header {
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 15px;
+    margin-bottom: 20px;
+    padding: 15px;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 15px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+  
+  .case-thumb {
+    width: 70px;
+    height: 70px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  }
+  
+  .case-title {
+    font-size: 1.3rem;
+    font-weight: 600;
+    margin-left: 0;
+    color: #fff;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  }
+  
+  /* Improved action buttons layout */
+  .case-details-actions {
+    flex-direction: column;
+    gap: 15px;
+    margin-bottom: 25px;
+  }
+  
+  .case-details-actions .case-price {
+    order: -1;
+    align-self: center;
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: #00ff88;
+    background: rgba(0, 255, 136, 0.1);
+    border: 1px solid rgba(0, 255, 136, 0.3);
+    border-radius: 12px;
+    padding: 12px 24px;
+    text-shadow: 0 0 10px rgba(0, 255, 136, 0.5);
+  }
+  
+  /* Better button styling */
+  .unlock-btn, .back-btn {
+    width: 100%;
+    padding: 16px 24px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    border-radius: 15px;
+    border: none;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  }
+  
+  .unlock-btn {
+    background: linear-gradient(135deg, #00ff88 0%, #00cc6a 100%);
+    color: #000;
+    text-shadow: none;
+    box-shadow: 0 6px 20px rgba(0, 255, 136, 0.3);
+  }
+  
+  .unlock-btn:hover, .unlock-btn:active {
+    background: linear-gradient(135deg, #00cc6a 0%, #00aa55 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 255, 136, 0.4);
+  }
+  
+  .back-btn {
+    background: rgba(255, 255, 255, 0.1);
+    color: #fff;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+  }
+  
+  .back-btn:hover, .back-btn:active {
+    background: rgba(255, 255, 255, 0.2);
+    transform: translateY(-1px);
+  }
+  
+  /* Improved grid layout for iPhone */
+  .case-items-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+    margin-top: 20px;
+  }
+  
+  .case-item {
+    background: rgba(0, 0, 0, 0.4);
+    border-radius: 15px;
+    padding: 15px 10px 12px 10px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  }
+  
+  .case-item:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+    border-color: rgba(255, 255, 255, 0.2);
+  }
+  
+  .case-item img {
+    width: 100%;
+    height: 120px;
+    object-fit: contain;
+    border-radius: 10px;
+    margin-bottom: 8px;
+  }
+  
+  .case-item > div:last-child {
+    font-size: 0.9rem;
+    font-weight: 500;
+    text-align: center;
+    margin-top: 8px;
+  }
+  
+  /* Carousel improvements for iPhone */
+  #carousel-view {
+    padding: 15px;
+  }
+  
+  #back-btn2 {
+    top: 25px;
+    left: 20px;
+    padding: 12px 20px;
+    font-size: 1rem;
+    font-weight: 600;
+    border-radius: 12px;
+    background: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+  }
+  
+  #back-btn2:hover, #back-btn2:active {
+    background: rgba(0, 0, 0, 0.9);
+    transform: translateY(-1px);
+  }
+  
+  /* Better carousel cards for iPhone */
+  .case-card {
+    width: 110px;
+    height: 160px;
+    margin: 0 6px;
+    border-radius: 12px;
+    background: #2a2d35;
+    border: 2px solid #1a1d23;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    transition: all 0.3s ease;
+  }
+  
+  .case-card img {
+    max-width: 70px;
+    max-height: 70px;
+    margin-top: 15px;
+  }
+  
+  .center-line {
+    height: 160px;
+    width: 3px;
+    background: linear-gradient(to bottom, #ffd700 0%, #ffed4e 50%, #ffd700 100%);
+    box-shadow: 0 0 15px rgba(255, 215, 0, 0.8);
+  }
+  
+  /* Improved winning popup for iPhone */
+  .winning-popup {
+    width: 85vw;
+    max-width: 320px;
+    padding: 25px 20px;
+    border-radius: 20px;
+    background: linear-gradient(135deg, #2a2a2a 0%, #1a1a1a 100%);
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+  }
+  
+  .winning-card {
+    min-width: auto;
+    padding: 0;
+    background: transparent;
+    border: none;
+    box-shadow: none;
+  }
+  
+  .winning-item {
+    width: 180px;
+    height: 180px;
+    margin: 0 auto 20px auto;
+    border-radius: 15px;
+    background: #393b44;
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+  }
+  
+  .winning-item img {
+    max-width: 100px;
+    max-height: 100px;
+  }
+  
+  .winning-info h2 {
+    font-size: 1.4rem;
+    margin-bottom: 15px;
+    font-weight: 700;
+    text-align: center;
+  }
+  
+  .winning-details {
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 20px;
+    
+    text-align: center;
+  }
+  
+  .winning-rarity-text {
+    font-size: 1rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  
+  .winning-value {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #00ff88;
+    text-shadow: 0 0 10px rgba(0, 255, 136, 0.5);
+  }
+  
+  .btn-again {
+    width: 100%;
+    padding: 16px 24px;
+    font-size: 1.1rem;
+    font-weight: 700;
+    border-radius: 15px;
+    background: linear-gradient(135deg, #00ff88 0%, #00cc6a 100%);
+    color: #000;
+    border: none;
+    box-shadow: 0 6px 20px rgba(0, 255, 136, 0.3);
+    transition: all 0.3s ease;
+  }
+  
+  .btn-again:hover, .btn-again:active {
+    background: linear-gradient(135deg, #00cc6a 0%, #00aa55 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 255, 136, 0.4);
+  }
+  
+  /* Better vignette for iPhone */
+  .blur-vignette::before {
+    width: 350px;
+    height: 350px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0 0 50px rgba(255, 255, 255, 0.2);
+  }
+  
+  /* Safe area adjustments for iPhone with notch */
+  @supports (padding-top: env(safe-area-inset-top)) {
+    header {
+      padding-top: calc(env(safe-area-inset-top) + 20px);
+    }
+    
+    #back-btn2 {
+      top: calc(env(safe-area-inset-top) + 25px);
+    }
+  }
+  
+  /* Improved touch interactions */
+  .case-item, .unlock-btn, .back-btn, .btn-again, #back-btn2 {
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    user-select: none;
+  }
+  
+  /* Loading states for better UX */
+  .unlock-btn:active {
+    transform: scale(0.98);
+  }
+  
+  .case-item:active {
+    transform: scale(0.95);
+  }
+}
+
+/* iPhone X and newer (with notch) specific adjustments */
+@media (max-width: 480px) and (min-height: 812px) {
+  .main-case-details {
+    margin-bottom: calc(env(safe-area-inset-bottom) + 20px);
+  }
+  
+  .winning-popup {
+    max-height: calc(100vh - env(safe-area-inset-top) - env(safe-area-inset-bottom) - 40px);
+    overflow-y: auto;
+  }
+}
+
+/* iPhone-specific fixes for alignment and sizing */
+@media (max-width: 480px) {
+  /* Fix back button - smaller and centered */
+  #back-btn2 {
+    position: fixed;
+    top: 20px;
+    left: 0%;
+    z-index: 999;
+    padding: 8px 16px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    border-radius: 8px;
+    background: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+    min-width: 80px;
+    text-align: center;
+  }
+  
+  /* Safe area adjustment for back button */
+  @supports (padding-top: env(safe-area-inset-top)) {
+    #back-btn2 {
+      top: calc(env(safe-area-inset-top) + 15px);
+    }
+  }
+  
+  /* Fix carousel view layout */
+  #carousel-view {
+    padding: 60px 10px 20px 10px; /* Add top padding for back button */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+  }
+  
+  /* Center the carousel container */
+  #carousel {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 180px;
+    margin: 0 auto;
+  }
+  
+  /* Fix winning popup positioning and sizing */
+  .winning-popup {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(var(--popup-scale, 1));
+    width: 90vw;
+    max-width: 340px;
+    max-height: 85vh;
+    padding: 20px;
+    border-radius: 16px;
+    background: linear-gradient(135deg, #2a2a2a 0%, #1a1a1a 100%);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.7);
+    z-index: 1001;
+    overflow-y: auto;
+    margin: 0;
+  }
+  
+  /* Fix winning card layout */
+  .winning-card {
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    padding: 0;
+    margin: 0;
+    min-width: auto;
+    text-align: center;
+  }
+  
+  /* Fix winning item sizing */
+  .winning-item {
+    width: 160px;
+    height: 160px;
+    margin: 0 auto 16px auto;
+    border-radius: 12px;
+    background: #393b44;
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .winning-item img {
+    max-width: 90px;
+    max-height: 90px;
+    object-fit: contain;
+    z-index: 2;
+  }
+  
+  /* Fix winning info layout */
+  .winning-info {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  
+  .winning-info h2 {
+    font-size: 1.3rem;
+    margin: 0 0 12px 0;
+    font-weight: 600;
+    color: #fff;
+    line-height: 1.2;
+  }
+  
+  /* Fix winning details layout */
+  .winning-details {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 20px;
+    align-items: center;
+  }
+  
+  .winning-rarity-text {
+    font-size: 0.9rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin: 0;
+  }
+  
+  .winning-value {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: #00ff88;
+    text-shadow: 0 0 8px rgba(0, 255, 136, 0.4);
+    margin: 0;
+  }
+  
+  /* Fix button layout */
+  .winning-actions {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+  }
+  
+  .btn-again {
+    width: 100%;
+    max-width: 280px;
+    padding: 14px 20px;
+    font-size: 1rem;
+    font-weight: 600;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #00ff88 0%, #00cc6a 100%);
+    color: #000;
+    border: none;
+    box-shadow: 0 4px 15px rgba(0, 255, 136, 0.3);
+    transition: all 0.3s ease;
+    text-align: center;
+  }
+  
+  .btn-again:active {
+    transform: translateY(1px);
+    box-shadow: 0 2px 8px rgba(0, 255, 136, 0.4);
+  }
+  
+  /* Fix carousel cards for better alignment */
+  .case-card {
+    width: 100px;
+    height: 150px;
+    margin: 0 4px;
+    border-radius: 8px;
+    background: #393b44;
+    border: 2px solid #23242a;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+  
+  .case-card img {
+    max-width: 60px;
+    max-height: 60px;
+    margin-top: 8px;
+    object-fit: contain;
+  }
+  
+  /* Fix center line */
+  .center-line {
+    height: 150px;
+    width: 2px;
+    background: linear-gradient(to bottom, #ffd700 0%, #ffed4e 50%, #ffd700 100%);
+    box-shadow: 0 0 10px rgba(255, 215, 0, 0.6);
+    border-radius: 1px;
+  }
+  
+  /* Fix rarity fade positioning */
+  .rarity-fade {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 20px;
+    border-radius: 0 0 8px 8px;
+    opacity: 1;
+    z-index: 5;
+  }
+  
+  .winning-rarity-fade {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 30px;
+    border-radius: 0 0 12px 12px;
+    opacity: 1;
+    z-index: 1;
+  }
+  
+  /* Fix blur vignette */
+  .blur-vignette::before {
+    width: 300px;
+    height: 300px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 0 30px rgba(255, 255, 255, 0.1);
+  }
+  
+  /* Ensure proper scrolling for popup */
+  .winning-popup::-webkit-scrollbar {
+    width: 4px;
+  }
+  
+  .winning-popup::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 2px;
+  }
+  
+  .winning-popup::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 2px;
+  }
+  
+  /* Fix for very small screens */
+  @media (max-height: 600px) {
+    .winning-popup {
+      max-height: 90vh;
+      padding: 15px;
+    }
+    
+    .winning-item {
+      width: 120px;
+      height: 120px;
+      margin-bottom: 12px;
+    }
+    
+    .winning-item img {
+      max-width: 70px;
+      max-height: 70px;
+    }
+    
+    .winning-info h2 {
+      font-size: 1.1rem;
+      margin-bottom: 8px;
+    }
+    
+    .winning-value {
+      font-size: 1.2rem;
+    }
+  }
+}
+
+/* Fix center line height to match case cards on iPhone */
+@media (max-width: 480px) {
+  /* Fix center line to match case card height exactly */
+  .center-line {
+    height: 130px; /* Match the case-card height */
+    width: 2px;
+    background: linear-gradient(to bottom, #ffd700 0%, #ffed4e 50%, #ffd700 100%);
+    box-shadow: 0 0 10px rgba(255, 215, 0, 0.6);
+    border-radius: 1px;
+    position: absolute;
+    left: 50%;
+    top: 53%;
+    transform: translate(-50%, -50%);
+    z-index: 10;
+    pointer-events: none;
+  }
+  
+  /* Ensure case cards have consistent height */
+  .case-card {
+    width: 100px;
+    height: 150px; /* Consistent height */
+    margin: 0 4px;
+    border-radius: 8px;
+    background: #393b44;
+    border: 2px solid #23242a;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+  
+  /* Make sure the center line inside the card also matches */
+  .case-card .center-line {
+    height: 150px; /* Exactly match the card height */
+    width: 2px;
+    background: linear-gradient(to bottom, #ffd700 0%, #ffed4e 50%, #ffd700 100%);
+    box-shadow: 0 0 10px rgba(255, 215, 0, 0.6);
+    border-radius: 1px;
+    position: absolute;
+    left: 50%;
+    top: 0; /* Start from top of card */
+    transform: translateX(-50%);
+    z-index: 10;
+    pointer-events: none;
+  }
+  
+
+}
+
+/* Also fix for slightly larger mobile screens */
+@media (min-width: 481px) and (max-width: 768px) {
+  .center-line {
+    height: 180px; /* Match mobile card height */
+  }
+  
+  .case-card {
+    height: 180px;
+  }
+  
+  .case-card .center-line {
+    height: 180px;
+  }
+}
+
+/* Fix price tag styling for iPhone devices */
+@media (max-width: 480px) {
+  /* Better price display in case items */
+  .case-item {
+    background: rgba(0, 0, 0, 0.4);
+    border-radius: 15px;
+    padding: 12px 10px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .case-item img {
+    width: 100%;
+    height: 100px;
+    object-fit: contain;
+    border-radius: 8px;
+    margin-bottom: 8px;
+  }
+  
+  /* Fix the price range display */
+  .case-item > div:first-of-type {
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    width: 100% !important;
+    margin: 8px 0 !important;
+    padding: 6px 8px !important;
+    background: rgba(0, 0, 0, 0.3) !important;
+    border-radius: 8px !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  }
+  
+  /* Style individual price elements */
+  .case-item .case-details-price {
+    font-size: 0.8rem !important;
+    font-weight: 600 !important;
+    color: #00ff88 !important;
+    background: transparent !important;
+    padding: 0 !important;
+    margin: 0 4px !important;
+    border-radius: 0 !important;
+    text-shadow: 0 0 5px rgba(0, 255, 136, 0.3) !important;
+  }
+  
+  .case-item .case-details-dash {
+    color: rgba(255, 255, 255, 0.6) !important;
+    font-size: 0.8rem !important;
+    font-weight: 400 !important;
+    margin: 0 2px !important;
+  }
+  
+  /* Style the rarity gradient bar */
+  .case-item > div:nth-of-type(2) {
+    width: 100% !important;
+    height: 3px !important;
+    margin: 4px 0 !important;
+    border-radius: 2px !important;
+    box-shadow: 0 0 8px rgba(0, 0, 0, 0.3) !important;
+  }
+  
+  /* Style the coin name */
+  .case-item > div:last-child {
+    color: #fff !important;
+    font-size: 0.9rem !important;
+    font-weight: 600 !important;
+    text-align: center !important;
+    width: 100% !important;
+    margin-top: 6px !important;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5) !important;
+  }
+  
+  /* Alternative: Single price display (cleaner look) */
+  /* If you want to show just one price instead of range, use this: */
+  .case-item.single-price > div:first-of-type {
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    width: 100% !important;
+    margin: 8px 0 !important;
+    padding: 8px 12px !important;
+    background: linear-gradient(135deg, rgba(0, 255, 136, 0.1) 0%, rgba(0, 255, 136, 0.05) 100%) !important;
+    border-radius: 10px !important;
+    border: 1px solid rgba(0, 255, 136, 0.2) !important;
+  }
+  
+  .case-item.single-price .case-details-price {
+    font-size: 1rem !important;
+    font-weight: 700 !important;
+    color: #00ff88 !important;
+    background: transparent !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    text-shadow: 0 0 10px rgba(0, 255, 136, 0.4) !important;
+  }
+  
+  /* Hide dash and second price for single price display */
+  .case-item.single-price .case-details-dash,
+  .case-item.single-price .case-details-price:last-child {
+    display: none !important;
+  }
+  
+  /* Enhanced hover effect for case items */
+  .case-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+    border-color: rgba(255, 255, 255, 0.2);
+  }
+  
+  .case-item:hover > div:first-of-type {
+    background: rgba(0, 255, 136, 0.1) !important;
+    border-color: rgba(0, 255, 136, 0.3) !important;
+  }
+  
+  .case-item:hover .case-details-price {
+    color: #00ffaa !important;
+    text-shadow: 0 0 8px rgba(0, 255, 170, 0.5) !important;
+  }
+}
+
+/* Alternative: Clean single price display */
+@media (max-width: 480px) {
+  .case-item-clean {
+    background: rgba(0, 0, 0, 0.4);
+    border-radius: 15px;
+    padding: 15px 10px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    text-align: center;
+  }
+  
+  .case-item-clean img {
+    width: 100%;
+    height: 100px;
+    object-fit: contain;
+    margin-bottom: 10px;
+  }
+  
+  .case-item-clean .price-display {
+    background: linear-gradient(135deg, rgba(0, 255, 136, 0.15) 0%, rgba(0, 255, 136, 0.05) 100%);
+    border: 1px solid rgba(0, 255, 136, 0.3);
+    border-radius: 12px;
+    padding: 8px 12px;
+    margin: 8px 0;
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: #00ff88;
+    text-shadow: 0 0 8px rgba(0, 255, 136, 0.4);
+  }
+  
+  .case-item-clean .coin-name {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #fff;
+    margin-top: 8px;
+  }
+}
+
+/* Redesigned winning popup for smaller devices */
+@media (max-width: 480px) {
+  /* ... existing iPhone styles ... */
+  
+  /* Completely redesigned winning popup */
+  .winning-popup {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(var(--popup-scale, 1));
+    width: 85vw;
+    max-width: 300px;
+    max-height: 80vh;
+    padding: 0;
+    border-radius: 20px;
+    background: linear-gradient(145deg, #1e1e1e 0%, #2a2a2a 50%, #1a1a1a 100%);
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.8);
+    z-index: 1001;
+    overflow: hidden;
+    margin: 0;
+  }
+  
+  /* Redesigned winning card - more compact */
+  .winning-card {
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    padding: 20px;
+    margin: 0;
+    min-width: auto;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  /* Compact winning item with better proportions */
+  .winning-item {
+    width: 140px;
+    height: 140px;
+    margin: 0 auto 15px auto;
+    border-radius: 16px;
+    background: #393b44;
+    border: 2px solid rgba(255, 255, 255, 0.15);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .winning-item::before {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+    border-radius: 16px;
+    z-index: 1;
+  }
+  
+  .winning-item img {
+    max-width: 80px;
+    max-height: 80px;
+    object-fit: contain;
+    z-index: 2;
+    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
+  }
+  
+  /* Compact info section */
+  .winning-info {
+    text-align: center;
+    margin-bottom: 15px;
+    width: 100%;
+  }
+  
+  .winning-info h2 {
+    font-size: 1.2rem;
+    margin: 0 0 10px 0;
+    font-weight: 700;
+    color: #fff;
+    line-height: 1.2;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+  }
+  
+  /* Inline details layout for compact design */
+  .winning-details {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding: 12px 16px;
+    background:rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+  
+  .winning-rarity-text {
+    font-size: 0.85rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin: 0;
+    padding: 4px 8px;
+    border-radius: 6px;
+    background:black;
+  }
+  
+  .winning-value {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #00ff88;
+    text-shadow: 0 0 10px rgba(0, 255, 136, 0.5);
+    margin: 0;
+  }
+  
+  /* Compact button */
+  .winning-actions {
+    display: flex;
+    justify-content: center;
+    margin: 0;
+    width: 100%;
+  }
+  
+  .btn-again {
+    width: 100%;
+    padding: 12px 20px;
+    font-size: 1rem;
+    font-weight: 700;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #00ff88 0%, #00cc6a 100%);
+    color: #000;
+    border: none;
+    box-shadow: 0 6px 20px rgba(0, 255, 136, 0.3);
+    transition: all 0.3s ease;
+    text-align: center;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  
+  .btn-again:active {
+    transform: translateY(2px);
+    box-shadow: 0 3px 12px rgba(0, 255, 136, 0.4);
+  }
+  
+  /* Rarity fade with better positioning */
+  .winning-rarity-fade {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 25px;
+    border-radius: 0 0 14px 14px;
+    opacity: 0.9;
+    z-index: 1;
+  }
+  
+  /* Alternative: Card-style layout */
+  .winning-popup.card-style {
+    background: #2a2a2a;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+  }
+  
+  .winning-popup.card-style .winning-card {
+    padding: 15px;
+  }
+  
+  .winning-popup.card-style .winning-item {
+    width: 120px;
+    height: 120px;
+    margin-bottom: 12px;
+  }
+  
+  .winning-popup.card-style .winning-item img {
+    max-width: 70px;
+    max-height: 70px;
+  }
+  
+  .winning-popup.card-style .winning-info h2 {
+    font-size: 1.1rem;
+    margin-bottom: 8px;
+  }
+  
+  .winning-popup.card-style .winning-details {
+    flex-direction: column;
+    gap: 6px;
+    padding: 8px 12px;
+    margin-bottom: 15px;
+  }
+  
+  .winning-popup.card-style .winning-value {
+    font-size: 1rem;
+  }
+  
+  .winning-popup.card-style .btn-again {
+    padding: 10px 16px;
+    font-size: 0.9rem;
+  }
+  
+  /* Very small screens (iPhone SE, etc.) */
+  @media (max-height: 600px) {
+    .winning-popup {
+      max-height: 75vh;
+      width: 80vw;
+      max-width: 280px;
+    }
+    
+    .winning-card {
+      padding: 15px;
+    }
+    
+    .winning-item {
+      width: 100px;
+      height: 100px;
+      margin-bottom: 10px;
+    }
+    
+    .winning-item img {
+      max-width: 60px;
+      max-height: 60px;
+    }
+    
+    .winning-info h2 {
+      font-size: 1rem;
+      margin-bottom: 8px;
+    }
+    
+    .winning-details {
+      padding: 8px 12px;
+      margin-bottom: 12px;
+    }
+    
+    .winning-value {
+      font-size: 0.95rem;
+    }
+    
+    .btn-again {
+      padding: 10px 16px;
+      font-size: 0.9rem;
+    }
+  }
+  
+  /* Landscape orientation adjustments */
+  @media (max-height: 500px) and (orientation: landscape) {
+    .winning-popup {
+      max-height: 85vh;
+      width: 60vw;
+      max-width: 350px;
+    }
+    
+    .winning-card {
+      padding: 12px;
+    }
+    
+    .winning-item {
+      width: 80px;
+      height: 80px;
+      margin-bottom: 8px;
+    }
+    
+    .winning-item img {
+      max-width: 50px;
+      max-height: 50px;
+    }
+    
+    .winning-details {
+      flex-direction: row;
+      padding: 6px 10px;
+    }
+  }
+}
+
+/* Add pulsing animation for winning card */
+.winning-card-pulse {
+  animation: winningCardPulse 1.5s ease-in-out infinite !important;
+}
+
+@keyframes winningCardPulse {
+  0% {
+    transform: scale(1.2) translateY(-30px);
+    filter: brightness(1.2) drop-shadow(0 8px 24px rgba(255,255,255,0.3));
+  }
+  50% {
+    transform: scale(1.3) translateY(-35px);
+    filter: brightness(1.4) drop-shadow(0 12px 32px rgba(255,255,255,0.5));
+  }
+  100% {
+    transform: scale(1.2) translateY(-30px);
+    filter: brightness(1.2) drop-shadow(0 8px 24px rgba(255,255,255,0.3));
+  }
+}
+
+/* Ensure the animation works on mobile devices */
+@media (max-width: 480px) {
+  @keyframes winningCardPulse {
+    0% {
+      transform: scale(1.15) translateY(-20px);
+      filter: brightness(1.2) drop-shadow(0 6px 20px rgba(255,255,255,0.3));
+    }
+    50% {
+      transform: scale(1.25) translateY(-25px);
+      filter: brightness(1.4) drop-shadow(0 10px 28px rgba(255,255,255,0.5));
+    }
+    100% {
+      transform: scale(1.15) translateY(-20px);
+      filter: brightness(1.2) drop-shadow(0 6px 20px rgba(255,255,255,0.3));
+    }
+  }
+}
