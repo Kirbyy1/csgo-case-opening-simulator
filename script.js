@@ -4,7 +4,7 @@ const memeCoins = [
     image: "images/trasparent coins/Camo_Coin-removebg-preview.webp",
     rarity: "common", // blue
     odds: 0.18,
-    value: "91.780,43 €",
+    value: "91.780,43 $",
     gradient: "linear-gradient(90deg,#1a8cff 60%,#fff0)"
   },
   {
@@ -13,7 +13,7 @@ const memeCoins = [
     rarity: "common", // blue
     odds: 0.18,
     status: "Launched",
-    value: "91.780,43 €",
+    value: "91.780,43 $",
     gradient: "linear-gradient(90deg,#1a8cff 60%,#fff0)"
   },
   {
@@ -21,7 +21,7 @@ const memeCoins = [
     image: "images/trasparent coins/ChillGuy_Coin_-removebg-preview.webp",
     rarity: "common", // blue
     odds: 0.18,
-    value: "91.780,43 €",
+    value: "91.780,43 $",
     gradient: "linear-gradient(90deg,#1a8cff 60%,#fff0)"
   },
   {
@@ -30,7 +30,7 @@ const memeCoins = [
     rarity: "common", // blue
     odds: 0.18,
     status: "Launched",
-    value: "91.780,43 €",
+    value: "91.780,43 $",
     gradient: "linear-gradient(90deg,#1a8cff 60%,#fff0)"
   },
   {
@@ -38,7 +38,7 @@ const memeCoins = [
     image: "images/trasparent coins/Fire_Coin-removebg-preview.webp",
     rarity: "common", // blue
     odds: 0.18,
-    value: "91.780,43 €",
+    value: "91.780,43 $",
     gradient: "linear-gradient(90deg,#1a8cff 60%,#fff0)"
   },
   {
@@ -47,7 +47,7 @@ const memeCoins = [
     rarity: "common", // blue
     odds: 0.18,
     status: "Launched",
-    value: "91.780,43 €",
+    value: "91.780,43 $",
     gradient: "linear-gradient(90deg,#1a8cff 60%,#fff0)"
   },
   {
@@ -55,7 +55,7 @@ const memeCoins = [
     image: "images/trasparent coins/Nasdaq.webp",
     rarity: "common", // blue
     odds: 0.18,
-    value: "91.780,43 €",
+    value: "91.780,43 $",
     gradient: "linear-gradient(90deg,#1a8cff 60%,#fff0)"
   },
   {
@@ -64,7 +64,7 @@ const memeCoins = [
     rarity: "common", // blue
     odds: 0.18,
     status: "Launched",
-    value: "91.780,43 €",
+    value: "91.780,43 $",
     gradient: "linear-gradient(90deg,#1a8cff 60%,#fff0)"
   },
   {
@@ -72,7 +72,7 @@ const memeCoins = [
     image: "images/trasparent coins/Nightmare_coin-removebg-preview.webp",
     rarity: "rare", // purple
     odds: 0.05,
-    value: "91.780,43 €",
+    value: "91.780,43 $",
     gradient: "linear-gradient(90deg,hsl(279, 97%, 49%) 60%,#fff0)"
   },
   {
@@ -81,7 +81,7 @@ const memeCoins = [
     rarity: "rare", // purple
     odds: 0.05,
     status: "Launched",
-    value: "91.780,43 €",
+    value: "91.780,43 $",
     gradient: "linear-gradient(90deg,hsl(279, 97%, 49%) 60%,#fff0)"
   },
   {
@@ -89,7 +89,7 @@ const memeCoins = [
     image: "images/trasparent coins/Stonks_Coin-removebg-preview.webp",
     rarity: "epic", // pink
     odds: 0.03,
-    value: "91.780,43 €",
+    value: "91.780,43 $",
     gradient: "linear-gradient(90deg,#d21dba 60%,#fff0)"
   },
   {
@@ -98,7 +98,7 @@ const memeCoins = [
     rarity: "legendary", // red
     odds: 0.015,
     status: "Launched",
-    value: "91.780,43 €",
+    value: "91.780,43 $",
     gradient: "linear-gradient(90deg,#ec2603 60%,#fff0)"
   },
   {
@@ -106,7 +106,7 @@ const memeCoins = [
     image: "images/trasparent coins/bitcoin(xryso).webp",
     rarity: "mythical", // gold
     odds: 0.002,
-    value: "91.780,43 €",
+    value: "91.780,43 $",
     gradient: "linear-gradient(90deg,#f8e117,#fff0)"
   }
 ];
@@ -501,17 +501,7 @@ function showInteractiveButtons() {
 function openAgain() {
   const popup = document.getElementById('winning-popup');
   popup.style.opacity = '0';
-  
-  // Reset blur-vignette state before starting new animation
-  const blurVignette = document.querySelector('.blur-vignette');
-  if (blurVignette) {
-    blurVignette.style.display = 'none';
-    blurVignette.style.opacity = '0';
-    blurVignette.style.visibility = 'hidden';
-    blurVignette.style.boxShadow = 'none';
-    blurVignette.style.backdropFilter = 'none';
-  }
-  
+  // Removed blur-vignette hiding here so the blur stays visible
   setTimeout(() => {
     startCarouselAnimation();
   }, 400);
@@ -533,77 +523,102 @@ function getExtendedCoinsArray() {
 
 
 // Single, properly synchronized unlock button handler
-document.querySelector('.unlock-btn').onclick = function() {
-  console.log('Unlock button clicked!');
-  
-  // Disable the button to prevent multiple clicks
-  const unlockBtn = document.querySelector('.unlock-btn');
-  unlockBtn.disabled = true;
-  unlockBtn.style.opacity = '0.6';
-  unlockBtn.style.cursor = 'not-allowed';
-  
-  // Play unlock sound with proper synchronization
-  const unlockAudio = new Audio('sounds/case_unlock_01.mp3');
-  unlockAudio.volume = 0.4;
-  
-  // Get the actual duration of the audio file for precise timing
-  unlockAudio.addEventListener('loadedmetadata', () => {
-    const soundDuration = unlockAudio.duration * 700; // Convert to milliseconds
-    console.log('Unlock sound duration:', soundDuration, 'ms');
+const unlockBtn = document.querySelector('.unlock-btn');
+if (unlockBtn) {
+  unlockBtn.onclick = function() {
+    console.log('Unlock button clicked!');
     
-    // Play the sound
-    unlockAudio.play().then(() => {
-      // Wait for the exact duration of the sound before switching
-      setTimeout(() => {
-        console.log('Unlock sound finished, switching to carousel...');
-        document.querySelector('.main-case-details').style.display = 'none';
-        document.getElementById('carousel-view').style.display = 'flex';
-        startCarouselAnimation();
-        
-        // Re-enable the button
-        unlockBtn.disabled = false;
-        unlockBtn.style.opacity = '1';
-        unlockBtn.style.cursor = 'pointer';
-      }, soundDuration);
-    }).catch(e => {
-      console.log('Sound play failed, using fallback timing:', e);
-      // Fallback: use estimated duration if audio loading fails
-      setTimeout(() => {
-        document.querySelector('.main-case-details').style.display = 'none';
-        document.getElementById('carousel-view').style.display = 'flex';
-        startCarouselAnimation();
-        
-        // Re-enable the button
-        unlockBtn.disabled = false;
-        unlockBtn.style.opacity = '1';
-        unlockBtn.style.cursor = 'pointer';
-      }, 1800); // Fallback duration
-    });
-  });
-  
-  // Fallback if audio metadata fails to load
-  unlockAudio.addEventListener('error', () => {
-    console.log('Audio metadata failed to load, using fallback timing');
-    setTimeout(() => {
-      document.querySelector('.main-case-details').style.display = 'none';
-      document.getElementById('carousel-view').style.display = 'flex';
-      startCarouselAnimation();
+    // Disable the button to prevent multiple clicks
+    unlockBtn.disabled = true;
+    unlockBtn.style.opacity = '0.6';
+    unlockBtn.style.cursor = 'not-allowed';
+    
+    // Show loading text
+    const loadingText = document.getElementById('loading-text');
+    loadingText.style.display = 'block';
+    setTimeout(() => loadingText.classList.add('show'), 10);
+    
+    // Play unlock sound with proper synchronization
+    const unlockAudio = new Audio('sounds/case_unlock_01.mp3');
+    unlockAudio.volume = 0.4;
+    
+    // Get the actual duration of the audio file for precise timing
+    unlockAudio.addEventListener('loadedmetadata', () => {
+      const soundDuration = unlockAudio.duration * 700; // Convert to milliseconds
+      console.log('Unlock sound duration:', soundDuration, 'ms');
       
-      // Re-enable the button
-      unlockBtn.disabled = false;
-      unlockBtn.style.opacity = '1';
-      unlockBtn.style.cursor = 'pointer';
-    }, 1800);
-  });
-};
+      // Play the sound
+      unlockAudio.play().then(() => {
+        // Wait for the exact duration of the sound before switching
+        setTimeout(() => {
+          console.log('Unlock sound finished, switching to carousel...');
+          
+          // Hide loading text
+          const loadingText = document.getElementById('loading-text');
+          loadingText.classList.remove('show');
+          setTimeout(() => loadingText.style.display = 'none', 300);
+          
+          document.querySelector('.main-case-details').style.display = 'none';
+          document.getElementById('carousel-view').style.display = 'flex';
+          startCarouselAnimation();
+          
+          // Re-enable the button
+          unlockBtn.disabled = false;
+          unlockBtn.style.opacity = '1';
+          unlockBtn.style.cursor = 'pointer';
+        }, soundDuration);
+      }).catch(e => {
+        console.log('Sound play failed, using fallback timing:', e);
+        // Fallback: use estimated duration if audio loading fails
+        setTimeout(() => {
+          // Hide loading text
+          const loadingText = document.getElementById('loading-text');
+          loadingText.classList.remove('show');
+          setTimeout(() => loadingText.style.display = 'none', 300);
+          
+          document.querySelector('.main-case-details').style.display = 'none';
+          document.getElementById('carousel-view').style.display = 'flex';
+          startCarouselAnimation();
+          
+          // Re-enable the button
+          unlockBtn.disabled = false;
+          unlockBtn.style.opacity = '1';
+          unlockBtn.style.cursor = 'pointer';
+        }, 1800); // Fallback duration
+      });
+    });
+    
+    // Fallback if audio metadata fails to load
+    unlockAudio.addEventListener('error', () => {
+      console.log('Audio metadata failed to load, using fallback timing');
+      setTimeout(() => {
+        // Hide loading text
+        const loadingText = document.getElementById('loading-text');
+        loadingText.classList.remove('show');
+        setTimeout(() => loadingText.style.display = 'none', 300);
+        
+        document.querySelector('.main-case-details').style.display = 'none';
+        document.getElementById('carousel-view').style.display = 'flex';
+        startCarouselAnimation();
+        
+        // Re-enable the button
+        unlockBtn.disabled = false;
+        unlockBtn.style.opacity = '1';
+        unlockBtn.style.cursor = 'pointer';
+      }, 1800);
+    });
+  };
+}
 
-document.getElementById('back-btn2').onclick = function() {
-  document.getElementById('carousel-view').style.display = 'none';
-  document.querySelector('.main-case-details').style.display = 'flex';
-  
-  // Refresh the page
-  location.reload();
-};
+const backBtn2 = document.getElementById('back-btn2');
+if (backBtn2) {
+  backBtn2.onclick = function() {
+    document.getElementById('carousel-view').style.display = 'none';
+    document.querySelector('.main-case-details').style.display = 'flex';
+    // Refresh the page
+    location.reload();
+  };
+}
 
 // Add window resize handler to adjust layout
 window.addEventListener('resize', function() {
@@ -1198,4 +1213,47 @@ function animateCarouselToPerfectCenter(centerIndex, winningCoin, centering) {
       showWinningPopup(centerIndex, winningCoin);
     }, 8100);
   }, 200);
+}
+
+// Fetch real-time BTC price in USD
+async function fetchBTCPriceUSD() {
+  try {
+    const response = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd');
+    const data = await response.json();
+    return data.bitcoin.usd;
+  } catch (e) {
+    console.error('Failed to fetch BTC price:', e);
+    return null;
+  }
+}
+
+// Update all price tags in the DOM and JS data model
+async function updateBTCPrices() {
+  const btcPrice = await fetchBTCPriceUSD();
+  if (btcPrice) {
+    // Update all .case-details-price elements
+    document.querySelectorAll('.case-details-price').forEach(el => {
+      // Only update if it is not a 0 $ price
+      if (!el.textContent.trim().startsWith('0')) {
+        el.textContent = btcPrice.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + '\u00A0$';
+      }
+    });
+    // Update all .case-price elements (for both index.html and case-details.html)
+    document.querySelectorAll('.case-price').forEach(el => {
+      el.textContent = btcPrice.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + '\u00A0$';
+    });
+    // Update memeCoins value property
+    if (typeof memeCoins !== 'undefined') {
+      memeCoins.forEach(coin => {
+        coin.value = btcPrice.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + '\u00A0$';
+      });
+    }
+  }
+}
+
+// Call updateBTCPrices on DOMContentLoaded
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', updateBTCPrices);
+} else {
+  updateBTCPrices();
 }
