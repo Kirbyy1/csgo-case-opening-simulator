@@ -1215,12 +1215,12 @@ function animateCarouselToPerfectCenter(centerIndex, winningCoin, centering) {
   }, 200);
 }
 
-// Fetch real-time BTC price in USD
+// Fetch real-time BTC price in USD using Coinbase API
 async function fetchBTCPriceUSD() {
   try {
-    const response = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd');
+    const response = await fetch('https://api.coinbase.com/v2/prices/spot?currency=USD');
     const data = await response.json();
-    return data.bitcoin.usd;
+    return parseFloat(data.data.amount);
   } catch (e) {
     console.error('Failed to fetch BTC price:', e);
     return null;
